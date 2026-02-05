@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Razorpay Test Checkout</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+  <h2>Pay for Order</h2>
+  <button id="pay">Pay Now</button>
+
+  <script>
+    const options = {
+      key: "rzp_test_SCNpqCwoBRVsid",        // 🔁 your TEST key id
+      amount: 60000,                        // ₹300 in paise
+      currency: "INR",
+      name: "Sweet Shop",
+      description: "Order Payment",
+      order_id: "order_SCR5Vs6ILGxYj1",      // 🔁 your Razorpay order ID
+
+    method: {
+      upi: true,          // ✅ FORCE UPI
+      card: true,
+      netbanking: true,
+      wallet: true
+    },
+
+
+      handler: function (response) {
+        alert(
+          "Payment Success!\n" +
+          "Payment ID: " + response.razorpay_payment_id
+        );
+        console.log(response);
+      }
+    };
+
+    document.getElementById("pay").onclick = function () {
+      const rzp = new Razorpay(options);
+      rzp.open();
+    };
+  </script>
+</body>
+</html>
