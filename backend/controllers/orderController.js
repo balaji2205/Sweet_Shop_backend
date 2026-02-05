@@ -142,10 +142,6 @@ exports.createPaymentOrder = async (req, res) => {
 const crypto = require('crypto');
 
 exports.verifyPayment = async (req, res) => {
-    console.log('VERIFY BODY:', req.body);
-    console.log('Customer phone:', Order.customerPhone);
-
-
   try {
     const {
       razorpay_order_id,
@@ -154,22 +150,19 @@ exports.verifyPayment = async (req, res) => {
       orderId
     } = req.body;
 
-    // 1️⃣ Create expected signature
-    const body = razorpay_order_id + '|' + razorpay_payment_id;
+    // 1️⃣ VERIFY SIGNATURE
+    const body = `${razorpay_order_id}|${razorpay_payment_id}`;
 
     const expectedSignature = crypto
       .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
       .update(body)
       .digest('hex');
 
-    // 2️⃣ Verify signature
     if (expectedSignature !== razorpay_signature) {
-      return res.status(400).json({
-        message: 'Invalid payment signature'
-      });
+      return res.status(400).json({ message: 'Invalid payment signature' });
     }
 
-    // 3️⃣ Update order status to PAID
+    // 2️⃣ UPDATE ORDER STATUS
     const order = await Order.findByIdAndUpdate(
       orderId,
       {
@@ -181,24 +174,22 @@ exports.verifyPayment = async (req, res) => {
     ).populate('items.productId');
 
     if (!order) {
-      return res.status(404).json({
-        message: 'Order not found'
-      });
+      return res.status(404).json({ message: 'Order not found' });
     }
 
-    // 4️⃣ WhatsApp notification to OWNER
+    // 3️⃣ SEND WHATSAPP TO OWNER
     await sendWhatsApp({
       to: process.env.OWNER_WHATSAPP,
       message: whatsappTemplates.ownerOrderPaid(order)
     });
 
-    // 5️⃣ WhatsApp notification to CUSTOMER
+    // 4️⃣ SEND WHATSAPP TO CUSTOMER
     await sendWhatsApp({
       to: `whatsapp:${order.customerPhone}`,
       message: whatsappTemplates.customerPaymentSuccess(order)
     });
 
-    // 6️⃣ Final response
+    // 5️⃣ RESPONSE
     res.json({
       message: 'Payment verified successfully',
       order
@@ -206,7 +197,6 @@ exports.verifyPayment = async (req, res) => {
 
   } catch (error) {
     console.error('VERIFY PAYMENT ERROR:', error);
-    console.error('Payment verification error:', error);
     res.status(500).json({
       message: 'Payment verification failed'
     });
