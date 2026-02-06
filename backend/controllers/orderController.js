@@ -228,6 +228,12 @@ exports.placeOrder = async (req, res) => {
   try {
     const { items, customerPhone } = req.body;
 
+    if (!customerName) {
+  return res.status(400).json({
+    message: 'Customer name is required'
+  });
+}
+
     let orderItems = [];
     let totalAmount = 0;
 
@@ -253,6 +259,7 @@ exports.placeOrder = async (req, res) => {
     const order = new Order({
       items: orderItems,
       totalAmount,
+      customerName,
       customerPhone,
       status: 'CREATED'
     });

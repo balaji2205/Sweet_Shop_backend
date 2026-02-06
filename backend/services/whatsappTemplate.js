@@ -45,6 +45,9 @@ exports.ownerPaidVerify = (order) => {
   return `
 🧾 *New Order (PAID via UPI)*
 
+👤 Customer: ${order.customerName}
+${order.customerPhone ? `📞 Phone: ${order.customerPhone}` : ''}
+
 ${itemsText}
 
 💰 *Total:* ₹${order.totalAmount}
