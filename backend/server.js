@@ -16,6 +16,8 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/orders', require('./routes/orderRoute'));
+app.use('/api/auth', require('./routes/authRoute'));
+
 
 
 console.log('RAZORPAY KEY ID:', process.env.RAZORPAY_KEY_ID);
