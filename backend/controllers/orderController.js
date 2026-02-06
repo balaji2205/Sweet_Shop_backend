@@ -457,7 +457,19 @@ exports.deleteOrder = async (req, res) => {
       message: 'Server error'
     });
   }
+
 };
+
+
+exports.clearAllOrders = async (req, res) => {
+  try {
+    await Order.deleteMany({});
+    res.json({ message: 'All orders cleared' });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to clear orders' });
+  }
+};
+
 
 
 
