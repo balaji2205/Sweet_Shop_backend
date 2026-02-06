@@ -421,6 +421,47 @@ exports.getAllOrders = async (req, res) => {
 
 
 
+
+
+/* =====================================================
+   DELETE ORDER (ONLY IF COLLECTED)
+===================================================== */
+exports.deleteOrder = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const order = await Order.findById(id);
+
+    if (!order) {
+      return res.status(404).json({
+        message: 'Order not found'
+      });
+    }
+
+    // ❗ Safety check
+    if (order.status !== 'COLLECTED') {
+      return res.status(400).json({
+        message: 'Only collected orders can be deleted'
+      });
+    }
+
+    await Order.findByIdAndDelete(id);
+
+    res.json({
+      message: 'Order deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('DELETE ORDER ERROR:', error);
+    res.status(500).json({
+      message: 'Server error'
+    });
+  }
+};
+
+
+
+
 /* =====================================================
    🔕 RAZORPAY PART (COMMENTED FOR NOW)
 ===================================================== */

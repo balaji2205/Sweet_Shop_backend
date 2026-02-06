@@ -11,4 +11,5 @@ exports.sendWhatsApp = async ({ to, message }) => {
     to,
     body: message
   });
+  
 };

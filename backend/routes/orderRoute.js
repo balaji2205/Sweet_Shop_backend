@@ -56,7 +56,8 @@ const {
   placeOrder,
   updateOrderStatus,
   confirmPaymentMethod,
-  getAllOrders
+  getAllOrders,
+  deleteOrder
 } = require('../controllers/orderController');
 
 const {
@@ -105,5 +106,7 @@ router.patch(
   validate,
   updateOrderStatus
 );
+
+router.delete('/:id', deleteOrder);
 
 module.exports = router;
