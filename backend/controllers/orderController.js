@@ -398,6 +398,22 @@ exports.confirmPaymentMethod = async (req, res) => {
 
 
 
+exports.getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate('items.productId')
+      .sort({ createdAt: -1 });
+
+    res.json(orders);
+  } catch (error) {
+    console.error('GET ORDERS ERROR:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+
+
 /* =====================================================
    🔕 RAZORPAY PART (COMMENTED FOR NOW)
 ===================================================== */

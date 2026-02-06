@@ -49,10 +49,14 @@
 const express = require('express');
 const router = express.Router();
 
+
+
+
 const {
   placeOrder,
   updateOrderStatus,
-  confirmPaymentMethod
+  confirmPaymentMethod,
+  getAllOrders
 } = require('../controllers/orderController');
 
 const {
@@ -66,6 +70,11 @@ const validate = require('../middleware/validate');
 // =====================
 // STATIC ROUTES FIRST
 // =====================
+
+
+
+// GET ALL ORDERS (OWNER)
+router.get('/all', getAllOrders);
 
 // Confirm payment method (QR / Pay Later)
 router.post(
