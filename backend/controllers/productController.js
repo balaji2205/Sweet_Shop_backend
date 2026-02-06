@@ -18,7 +18,9 @@ exports.addProduct = async (req, res) => {
     res.status(400).json({ message: 'Invalid data' });
   }
 
-  exports.deleteProduct = async (req, res) => {
+};
+
+ exports.deleteProduct = async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
 
@@ -31,6 +33,4 @@ exports.addProduct = async (req, res) => {
     console.error('DELETE PRODUCT ERROR:', error);
     res.status(500).json({ message: 'Server error' });
   }
-};
-
 };
