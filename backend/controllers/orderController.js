@@ -318,6 +318,9 @@ exports.updateOrderStatus = async (req, res) => {
    CONFIRM PAYMENT METHOD (NEW – QR / PAY LATER FLOW)
 ===================================================== */
 exports.confirmPaymentMethod = async (req, res) => {
+
+  console.log('✅ CONFIRM PAYMENT HIT:', req.body);
+
   try {
     const { orderId, paymentType } = req.body;
 
