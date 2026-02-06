@@ -4,8 +4,7 @@ const router = express.Router();
 const {
   placeOrder,
   updateOrderStatus,
-  createPaymentOrder,
-  verifyPayment
+  confirmPaymentMethod
 } = require('../controllers/orderController');
 
 const {
@@ -17,17 +16,24 @@ const validate = require('../middleware/validate');
 
 
 // =====================
-// PAYMENT ROUTES FIRST
-// =====================
-router.post('/payment', createPaymentOrder);
-router.post('/payment/verify', verifyPayment);
-
-
-// =====================
 // ORDER ROUTES
 // =====================
-router.post('/', validatePlaceOrder, validate, placeOrder);
 
+// Create order
+router.post(
+  '/',
+  validatePlaceOrder,
+  validate,
+  placeOrder
+);
+
+// Confirm payment method (QR / Pay Later)
+router.post(
+  '/confirm-payment',
+  confirmPaymentMethod
+);
+
+// Update order status (owner)
 router.patch(
   '/:id/status',
   validateStatusUpdate,
@@ -36,4 +42,3 @@ router.patch(
 );
 
 module.exports = router;
-

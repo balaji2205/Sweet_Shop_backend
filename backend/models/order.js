@@ -25,9 +25,15 @@ const orderSchema = new mongoose.Schema(
       required: true
     },
 
+    // status: {
+    //   type: String,
+    //   enum: ['CREATED', 'PAID', 'PREPARING', 'READY', 'COLLECTED'],
+    //   default: 'CREATED'
+    // },
+
     status: {
       type: String,
-      enum: ['CREATED', 'PAID', 'PREPARING', 'READY', 'COLLECTED'],
+      enum: ['CREATED', 'PAID_PENDING_VERIFICATION','PAY_LATER', 'PREPARING', 'READY', 'COLLECTED'],
       default: 'CREATED'
     },
 
