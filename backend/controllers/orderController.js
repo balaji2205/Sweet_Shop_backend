@@ -318,11 +318,10 @@ exports.updateOrderStatus = async (req, res) => {
    CONFIRM PAYMENT METHOD (NEW – QR / PAY LATER FLOW)
 ===================================================== */
 exports.confirmPaymentMethod = async (req, res) => {
-
-  console.log('✅ CONFIRM PAYMENT HIT:', req.body);
-
   try {
     const { orderId, paymentType } = req.body;
+
+    console.log('✅ CONFIRM PAYMENT HIT:', req.body);
 
     if (!orderId || !paymentType) {
       return res.status(400).json({
@@ -353,36 +352,50 @@ exports.confirmPaymentMethod = async (req, res) => {
       });
     }
 
-    // 📲 WhatsApp to OWNER
-    await sendWhatsApp({
-      to: process.env.OWNER_WHATSAPP,
-      message:
-        paymentType === 'PAY_NOW'
-          ? whatsappTemplates.ownerPaidVerify(order)
-          : whatsappTemplates.ownerPayLater(order)
-    });
+    console.log('✅ ORDER UPDATED:', order.status);
 
-    // 📲 WhatsApp to CUSTOMER
-    await sendWhatsApp({
-      to: `whatsapp:${order.customerPhone}`,
-      message:
-        paymentType === 'PAY_NOW'
-          ? whatsappTemplates.customerPaidVerify(order)
-          : whatsappTemplates.customerPayLater(order)
-    });
+    // =========================
+    // 📲 WHATSAPP (NON-BLOCKING)
+    // =========================
+    try {
+      if (process.env.OWNER_WHATSAPP) {
+        await sendWhatsApp({
+          to: process.env.OWNER_WHATSAPP,
+          message:
+            paymentType === 'PAY_NOW'
+              ? whatsappTemplates.ownerPaidVerify(order)
+              : whatsappTemplates.ownerPayLater(order)
+        });
+      }
 
-    res.json({
+      if (order.customerPhone) {
+        await sendWhatsApp({
+          to: `whatsapp:${order.customerPhone}`,
+          message:
+            paymentType === 'PAY_NOW'
+              ? whatsappTemplates.customerPaidVerify(order)
+              : whatsappTemplates.customerPayLater(order)
+        });
+      }
+    } catch (whatsappError) {
+      // 🔥 DO NOT FAIL THE API
+      console.error('⚠️ WhatsApp failed:', whatsappError.message);
+    }
+
+    // ✅ ALWAYS RETURN SUCCESS
+    return res.json({
       message: 'Payment option confirmed',
       order
     });
 
   } catch (error) {
-    console.error('CONFIRM PAYMENT ERROR:', error);
-    res.status(500).json({
+    console.error('CONFIRM PAYMENT FATAL ERROR:', error);
+    return res.status(500).json({
       message: 'Server error'
     });
   }
 };
+
 
 
 /* =====================================================
