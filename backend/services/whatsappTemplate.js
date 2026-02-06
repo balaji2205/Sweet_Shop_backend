@@ -106,3 +106,47 @@ exports.customerOrderReady = (order) => `
 Please collect it at your convenience 🍬
 Thank you for ordering with us 🙏
 `;
+
+
+exports.ownerPaidVerify = (order) => {
+  const items = order.items
+    .map(i => `• ${i.productId.name} – ${i.quantityInGrams} g`)
+    .join('\n');
+
+  return `
+🧾 *New Order (Payment Done)*
+
+${items}
+
+💰 Amount: ₹${order.totalAmount}
+⚠️ Please verify payment screenshot during pickup
+🆔 Order ID: ${order._id}
+`;
+};
+
+exports.customerPaidVerify = (order) => `
+✅ *Order Placed Successfully*
+
+Order ID: ${order._id}
+Amount: ₹${order.totalAmount}
+
+Please show your payment screenshot to the owner while collecting the order 🙏
+`;
+
+exports.ownerPayLater = (order) => `
+🧾 *New Order (Pay at Shop)*
+
+Order ID: ${order._id}
+Amount: ₹${order.totalAmount}
+
+Customer will pay at pickup.
+`;
+
+exports.customerPayLater = (order) => `
+📦 *Order Placed Successfully*
+
+Order ID: ${order._id}
+Amount: ₹${order.totalAmount}
+
+Please pay at the shop while collecting your order 🙏
+`;
