@@ -226,7 +226,7 @@ const whatsappTemplates = require('../services/whatsappTemplate');
 ===================================================== */
 exports.placeOrder = async (req, res) => {
   try {
-    const { items, customerPhone } = req.body;
+    const { items, customerPhone, customerName } = req.body;
 
     if (!customerName) {
   return res.status(400).json({
